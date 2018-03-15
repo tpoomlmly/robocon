@@ -1,9 +1,12 @@
 from sr.robot import *
 import find_coords
 import gotocoords
-R = Robot()
+R = Robot.setup()
+R.init()
+R.servos[0] = 0 #This value will need to be edited
+R.wait_start()
 
-while True:
+def main():
     #begin seek phase
     markers = R.see(res=(1296, 736))
     xcoord, ycoord = 0.0 #initialise xcoord and ycoord
@@ -23,3 +26,7 @@ while True:
         #go to it
         gotocoords.drive(dist=closest.dist - 0.2) #0.2 for clearance between camera and claw
         #pick it up
+
+if __name__ == "__main__":
+    while True:
+        main()
