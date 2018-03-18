@@ -18,7 +18,7 @@ def main():
         closest = None
         i = 0
         for marker in markers:
-            if marker.info.marker_type = MARKER_TOKEN: #if a token; MARKER_TOKEN may have to be made a string
+            if marker.info.marker_type == MARKER_TOKEN: #if a token; MARKER_TOKEN may have to be made a string
                 if i == 0:
                     closest = marker
                     i += 1
@@ -40,23 +40,34 @@ def main():
 ##        self.z = coordinates[2]
 
 #Define all the markers - (uid: (x, y, z))
-staticMarkers = {0: (0.5, 0, 0.3), 1: (1.5, 0, 0.3), 2: (2.5, 0, 0.3),
-                 3: (3.5, 0, 0.3), 4: (4.5, 0, 0.3), 5: (5.5, 0, 0.3),
-                 6: (6, 0.5, 0.3), 7: (6, 1.5, 0.3), 8: (6, 2.5, 0.3),
-                 9: (6, 3.5, 0.3), 10: (6, 4.5, 0.3), 11: (6, 5.5, 0.3),
-                 12: (5.5, 6, 0.3), 13: (4.5, 6, 0.3), 14: (3.5, 6, 0.3),
-                 15: (2.5, 6, 0.3), 16: (1.5, 6, 0.3), 17: (0.5, 6, 0.3),
-                 18: (0, 5.5, 0.3), 19: (0, 4.5, 0.3), 20: (0, 3.5, 0.3),
-                 21: (0, 2.5, 0.3), 22: (0, 1.5, 0.3), 23: (0, 0.5, 0.3)}
+staticMarkers = [(0.5, 0, 0.3), (1.5, 0, 0.3), (2.5, 0, 0.3),
+                 (3.5, 0, 0.3), (4.5, 0, 0.3), (5.5, 0, 0.3),
+                 (6, 0.5, 0.3), (6, 1.5, 0.3), (6, 2.5, 0.3),
+                 (6, 3.5, 0.3), (6, 4.5, 0.3), (6, 5.5, 0.3),
+                 (5.5, 6, 0.3), (4.5, 6, 0.3), (3.5, 6, 0.3),
+                 (2.5, 6, 0.3), (1.5, 6, 0.3), (0.5, 6, 0.3),
+                 (0, 5.5, 0.3), (0, 4.5, 0.3), (0, 3.5, 0.3),
+                 (0, 2.5, 0.3), (0, 1.5, 0.3), (0, 0.5, 0.3)]
 
 def get(marker_list):
     for marker in marker_list:
-        if(marker.info.code in staticMarkers):
+        if marker.info.marker_type == MARKER_TOKEN:
             #xdist = marker.dist * sin(radians(abs(marker.rot_y) + marker.orientation.rot_y))
             #ydist = marker.dist * cos(radians(abs(marker.rot_y) + marker.orientation.rot_y))
             dist_from_wall = marker.dist * cos(radians(marker.orientation.rot_y - marker.rot_y))
             dist_along_wall = 0 - (marker.dist * sin(radians(marker.orientation.rot_y - marker.rot_y)))
-            
+            if (marker.info.code >= 0) and (marker.info.code <= 5):
+                ydist = dist_from_wall
+                xdist = dist_along_wall + staticMarkers[marker.info.code][0]
+            elif (marker.info.code >= 6) and (marker.info.code <= 11):
+                ydist = dist_along_wall + staticMarkers[marker.info.code][1]
+                xdist = staticMarkers[marker.info.code][0] - dist_from_wall
+            elif (marker.info.code >= 12) and (marker.info.code <= 17):
+                xdist = staticMarkers[marker.info.code][0] - dist_along_wall
+                ydist = staticMarkers[marker.info.code][1] - dist_from_wall
+            else:
+                ydist = dist_along_wall + staticMarkers[marker.info.code][1]
+                xdist = dist_from_wall
             return xdist, ydist
 
 ##Usage:
