@@ -5,7 +5,7 @@ import gotocoords
 R = Robot.setup()
 R.init()
 for i in range(4):
-    R.servos[i] = 0 #stop all servos from rotating
+    R.servos[i+1] = 0 #stop all servos from rotating
 R.wait_start()
 
 def main():
@@ -26,7 +26,7 @@ def main():
                     closest = marker
                     i += 1
         #go to it
-        gotocoords.drive(dist=closest.dist - 0.2) #0.2 for clearance between camera and claw
+        drive(dist=closest.dist - 0.2) #0.2 for clearance between camera and claw
         #pick it up
 
 
