@@ -1,7 +1,6 @@
 from sr.robot import *
 from math import sin, cos, radians, pi
 import time
-import gotocoords
 R = Robot.setup()
 R.init()
 for i in range(4):
@@ -26,7 +25,7 @@ def main():
                     closest = marker
                     i += 1
         #go to it
-        drive(dist=closest.dist - 0.2) #0.2 for clearance between camera and claw
+        drive(dist=closest.dist - 0.2, angle=closest.rot_y) #0.2 for clearance between camera and claw
         #pick it up
 
 
@@ -79,30 +78,27 @@ def get(marker_list):
 
 #start of driving code
 #need to add steering
-import time
-from math import pi
 
 circumference = 0.26 * math.pi #c=pi*d
-rot_time = circumference / 0.64 #circumference / speed of wheels = circumferences per sec
-rot_speed = 360 / rot_time #
+rot_time = circumference / 0.91 #circumference / speed of wheels = circumferences per sec
+rot_speed = 360 / rot_time #degrees per second
 
 def drive(dist=0, angle=0, _time=0): #dir in degrees
-    if dist != 0:
-        #steering section - needs finishing
-        R.motors[0].m0.power =
-        R.motors[0].m1.power = 
-        time.sleep(angle / rot_speed)
+    if angle != 0:
+        R.motors[0].m0.power = (120 * int(angle > 0)) - 60
+        R.motors[0].m1.power = (120 * int(angle < 0)) - 60
+        time.sleep(abs(angle) / rot_speed)
         R.motors[0].m0.power = 0
         R.motors[0].m1.power = 0
-        #end steering section
-        R.motors[0].m0.power = 42
-        R.motors[0].m1.power = 42
-        time.sleep(dist / 0.64) #time = distance / speed
+    if dist != 0:
+        R.motors[0].m0.power = 60
+        R.motors[0].m1.power = 60
+        time.sleep(dist / 0.91) #time = distance / speed
         R.motors[0].m0.power = 0
         R.motors[0].m1.power = 0
     elif time != 0:
-        R.motors[0].m0.power = 42
-        R.motors[0].m1.power = 42
+        R.motors[0].m0.power = 60
+        R.motors[0].m1.power = 60
         time.sleep(_time)
         R.motors[0].m0.power = 0
         R.motors[0].m1.power = 0
