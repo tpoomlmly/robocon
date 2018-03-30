@@ -86,11 +86,14 @@ circumference = 0.26 * math.pi #c=pi*d
 rot_time = circumference / 0.64 #circumference / speed of wheels = circumferences per sec
 rot_speed = 360 / rot_time #
 
-def drive(dist=0, _dir=0, _time=0): #dir in degrees
+def drive(dist=0, angle=0, _time=0): #dir in degrees
     if dist != 0:
         #steering section - needs finishing
         R.motors[0].m0.power =
-        time.sleep(_dir / rot_speed)
+        R.motors[0].m1.power = 
+        time.sleep(angle / rot_speed)
+        R.motors[0].m0.power = 0
+        R.motors[0].m1.power = 0
         #end steering section
         R.motors[0].m0.power = 42
         R.motors[0].m1.power = 42
