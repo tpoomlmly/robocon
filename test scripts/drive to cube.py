@@ -16,7 +16,7 @@ def drive(dist=0, angle=0, _time=0): #dir in degrees
         time.sleep(dist / 0.91) #time = distance / speed
         R.motors[0].m0.power = 0
         R.motors[0].m1.power = 0
-    elif time != 0:
+    elif _time != 0:
         R.motors[0].m0.power = 60
         R.motors[0].m1.power = 60
         time.sleep(_time)
