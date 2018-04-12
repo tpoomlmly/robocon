@@ -1,11 +1,12 @@
 import time
+import smbus
 from sr.robot import *
 
-R = Robot()
-#R = Robot.setup()
-#R.init()
-#R.servos[0] = 0
-#R.wait_start()
+R = Robot.setup()
+R.init(smbus.SMBus(1))
+for i in range(4):
+    R.servos[i] = 0
+R.wait_start()
 
 R.gpio.pin_mode(1, INPUT_ANALOG)
 
