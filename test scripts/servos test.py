@@ -2,9 +2,15 @@ import time
 import smbus
 from sr.robot import *
 
+#INITILIZATION
 R = Robot.setup()
+for i in range(3):
+    R.gpio.pin_mode(i + 2, OUTPUT)# Transitor innitilization
 R.init(smbus.SMBus(1))
-for i in range(4):
+
+#
+for i in range(3):
+    R.gpio.digital_write(i+2, True)# Power is allowed to flow into the servos
     R.servos[i] = 0
 R.wait_start()
 
