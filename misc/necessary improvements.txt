@@ -1,4 +1,4 @@
-180 degree spin is too far
+180 degree spin is not far enough
 box doesn't tip far enough
 box doesn't stay tipped for long enough
 doesn't check if the picking up is successful
@@ -9,5 +9,5 @@ Cut axle
 Cut axel
 Add collars to axle
 Make the robot stop in front of the bucket and rotate to face it
-
-
+R.zone
+Make it point to the centre of the cube rather than the centre of the face
