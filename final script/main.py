@@ -2,9 +2,9 @@ from sr.robot import *
 from math import sin, cos, radians, pi
 import time
 R = Robot.setup()
-R.init()
-for i in range(4):
-    R.servos[i+1] = 0 #stop all servos from rotating
+R.init(smbus.SMBus(1))
+for i in range(3):
+    R.servos[i] = 0 #stop all servos from rotating
 R.wait_start()
 
 def main():
