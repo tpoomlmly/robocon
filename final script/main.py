@@ -18,11 +18,8 @@ def main():
         closest = None
         i = 0
         for marker in markers:
-            if marker.info.marker_type == MARKER_TOKEN: #if a token; MARKER_TOKEN may have to be made a string
-                if i == 0:
-                    closest = marker
-                    i += 1
-                elif marker.dist < closest.dist: #This has to be this way because closest does not always have the attribute "dist"
+            if marker.info.marker_type == MARKER_TOKEN: #if a token
+                if i == 0 or marker.dist < closest.dist: #This has to be this way because closest does not always have the attribute "dist"
                     closest = marker
                     i += 1
         #go to it
