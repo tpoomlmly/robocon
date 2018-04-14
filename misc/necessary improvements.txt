@@ -1,7 +1,5 @@
-doesn't check if the picking up is successful
-A bit more of the box should be cut off.
-The code checking if the cube has been picked up checks for all markers
-Add collars to axle
 Make the robot stop in front of the bucket and rotate to face it
-R.zone
-Make it point to the centre of the cube rather than the centre of the face
+	Make coordinate finding code work
+	Make angle finding code work
+	Determine angle to rotate and where to drive
+Add RFID starting mechanism
