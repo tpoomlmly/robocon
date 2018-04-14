@@ -1,5 +1,3 @@
 Make the robot stop in front of the bucket and rotate to face it
-	Make coordinate finding code work
-	Make angle finding code work
 	Determine angle to rotate and where to drive
 Add RFID starting mechanism
