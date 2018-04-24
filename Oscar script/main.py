@@ -1,7 +1,7 @@
 from sr.robot import *
 import time
 import smbus
-import math
+#from math import sin, cos, radians
 
 class DrivingMotor(): #manages a motor
     def __init__(self, motor, drivingWeight, steeringWeight, cap):
@@ -46,71 +46,157 @@ class Chassis (): #controling groups of motors on a vehicle
         for x in range(0,len(self.motors)):
             self.motors[x].Stop()
 
-def MoveToward ( target ):
+def MoveToward ( target, distance ):
     if target.centre.polar.rot_y > 0: #steer towards cube
         robotChassis.SetSteering(1)
+        lastCubeRight = True
+        print "RIIIIGHT"
     else:
         robotChassis.SetSteering(-1)
+        lastCubeRight = False
+        print "LEEEEFT"
     time.sleep(abs(target.centre.polar.rot_y/turn))
     robotChassis.StopAll()
     time.sleep(0.2)
-    if target.dist > 0.22: #steer towards cube
+    if target.dist > distance: #steer towards cube
         robotChassis.SetSpeed(1)
     else:
         robotChassis.SetSpeed(-1)
-    time.sleep(abs((target.dist - 0.2)/speed)) #drive to cube
+    time.sleep(abs((target.dist - distance)/speed)) #drive to cube
     robotChassis.StopAll()
     time.sleep(0.2)
 
 def Grab ():
+    print "ATTACKING THE CUBE"
     R.servos[0] = 100 #lower arm
-    time.sleep(2.1)
+    time.sleep(2.3)
     R.servos[0] = 0
-    robotChassis.SetSpeed(0.5) #move forward
+    robotChassis.SetSpeed(1) #move forward
     time.sleep(0.8)
     robotChassis.StopAll()
     R.servos[1] = 30 #grab
     time.sleep(1)
     R.servos[0] = -100 #lift arm
-    time.sleep(2.1)
+    time.sleep(2.3)
     R.servos[0] = 0
-    time.sleep(0.5)
+    time.sleep(0.3)
     print "opening claw"
     R.servos[1] = -80 #release cube
     time.sleep(1)
     R.servos[1] = 0
 
-def SentryMode ():
-    robotChassis.SetSteering(1)
-    time.sleep(0.2)
-    robotChassis.StopAll()
+def Setup ():
+    R.servos[0] = 100 #lower arm
     time.sleep(0.5)
+    R.servos[0] = 0
 
-def DumpAtBox():
-    succses = False
-    while succses == False:
-        markers = R.see()
+def SentryMode ():
+    if lastCubeRight == True:
+        robotChassis.SetSteering(1)
+        print "target last seen to the right"
+    else:
+        robotChassis.SetSteering(-1)
+        print "target last seen to the left"
+    time.sleep(0.5)
+    robotChassis.StopAll()
+
+def GoToZone():
+    giveUp = 0
+    unsuccses = True
+    while ((unsuccses)):#and (giveUp < 7)):
+        print "giving up:", giveUp
+        time.sleep(0.5)
+        markers = R.see(res=(1296, 736))
         buckets = []
+
         for marker in markers:
-            if marker.info.marker_type == MARKER_BUCKET_SIDE:
+            isHome = False
+            for i in range(5):
+                if marker.info.code == i + (R.zone * 6):
+                    isHome = True
+            if marker.info.marker_type == MARKER_ARENA and isHome:
                 buckets.append(marker)
-        if len(buckets) > 0: #checks if there are cubes
+        if len(buckets) > 0: #checks if there are cubes'
+            print "going home"
             target = buckets[0]#FindClosest(buckets)
-            MoveToward(target)
-            if .25 > target.dist and target.dist > .15:
-                Dump()
-                succses = True
+            MoveToward(target, 1)
+            if 0.5 > target.dist  and target.centre.polar.rot_y > -20:
+                GoToBox()
+                unsuccses = False
         else:
             robotChassis.StopAll() #stops if nothing seen
-            print "I SEE NOTHING"
+            print "IM LOST"
             SentryMode()
+            giveUp += 1
+    giveUp = 0
+    print "gave up"
+
+def ZoneDump ():
+    robotChassis.SetSteering(-1) #rotate 180
+    time.sleep(2)
+    robotChassis.StopAll() #stop
+    time.sleep(0.1)
+    robotChassis.SetSpeed(-0.7) #reverse
+    time.sleep(4)
+    robotChassis.StopAll() #stop
+    time.sleep(0.1)
+
+    robotChassis.SetSpeed(1) #forward
+    time.sleep(0.5)
+    robotChassis.StopAll() #stop
+    time.sleep(0.1)
+    
+    R.servos[0] = 100 #lower arm
+    R.servos[2] = 100 #dump bucket
+    time.sleep(1.6)
+    R.servos[0] = 0
+    R.servos[2] = 0
+    time.sleep(1.8)
+    R.servos[0] = -100 #raise arm
+    R.servos[2] = -100 #undump bucket
+    time.sleep(1.6)
+    R.servos[0] = 0
+    R.servos[2] = 0
+    robotChassis.SetSteering(-1) #rotate left a bit
+    time.sleep(0.5)
+    robotChassis.StopAll()
+
+    robotChassis.SetSpeed(1) #forward
+    time.sleep(3)
+    robotChassis.StopAll() #stop
+
+def GoToBox():
+    giveUp = 0
+    unsuccses = True
+    while ((unsuccses) and (giveUp < 7)):
+        print "giving up:", giveUp
+        time.sleep(0.5)
+        markers = R.see(res=(1920, 1440))
+        buckets = []
+        for marker in markers:
+            if marker.info.marker_type == MARKER_BUCKET_SIDE and (R.zone == marker.info.code - 72 or R.zone == marker.info.code - 76):
+                buckets.append(marker)
+        if len(buckets) > 0: #checks if there are cubes'
+            print "going home"
+            target = buckets[0]#FindClosest(buckets)
+            MoveToward(target, 0.2)
+            if .25 > target.dist and target.dist > .15 and 20 > target.centre.polar.rot_y and target.centre.polar.rot_y > -20:
+                Dump()
+                unsuccses = False
+        else:
+            robotChassis.StopAll() #stops if nothing seen
+            print "IM LOST"
+            SentryMode()
+            giveUp = giveUp + 1
+    giveUp = 0
+    print "gave up"
 
 def Dump ():
-    robotChassis.SetSteering(1) #rotate 180
-    time.sleep(1)
+    robotChassis.SetSteering(-1) #rotate 180
+    time.sleep(2)
     robotChassis.StopAll() #stop
     time.sleep(0.5)
-    robotChassis.SetSpeed(-0.5) #reverse
+    robotChassis.SetSpeed(-0.7) #reverse
     time.sleep(1)
     robotChassis.StopAll() #stop
     time.sleep(0.5)
@@ -120,7 +206,7 @@ def Dump ():
     time.sleep(1.6)
     R.servos[0] = 0
     R.servos[2] = 0
-    time.sleep(2)
+    time.sleep(1)
     R.servos[0] = -100 #raise arm
     R.servos[2] = -100 #undump bucket
     time.sleep(1.6)
@@ -128,16 +214,17 @@ def Dump ():
     R.servos[2] = 0
     
     robotChassis.SetSpeed(1) #forward
-    time.sleep(0.5)
+    time.sleep(3)
     robotChassis.StopAll() #stop
 
 def Wiggle ():
+    print "WIGGLE"
     for i in range(3):
-        robotChassis.SetSpeed(-1) #move forward
+        robotChassis.SetSpeed(-1) #move backward
         time.sleep(0.2)
-        robotChassis.SetSpeed(1) #move backward
+        robotChassis.SetSpeed(1) #move forward
         time.sleep(0.2)
-    robotChassis.StopAll()
+    robotChassis.StopAll() #stop
     
 def Search (subject):
     markers = R.see()
@@ -148,10 +235,7 @@ def FindClosest(markers):
     i = 0
     for marker in markers:
         if marker.info.marker_type == MARKER_TOKEN: #if a token
-            if i == 0:
-                closest = marker
-                i += 1
-            elif marker.dist < closest.dist: #This has to be this way because closest does not always have the attribute "dist"
+            if i == 0 or marker.dist < closest.dist: #This has to be this way because closest does not always have the attribute "dist"
                 closest = marker
                 i += 1
     if closest != None:
@@ -170,36 +254,67 @@ R.wait_start()
 
 robotChassis = Chassis([DrivingMotor(R.motors[0].m0,1,-1,60),DrivingMotor(R.motors[0].m1,1,1,60)]) #setup motors + chassis
 
-speed = 0.9
-turn = 280
+speed = 0.5
+#speed = 0.6
+turn = 200
 cubeCount = 0
+lastMarker = -1
+lastCubeRight = True
+giveUp = 0
+safe = []
+holding = []
+
+Setup()
 
 while True:
     #--markers = Search()
-    markers = R.see()
+    time.sleep(0.5)
+    markers = R.see(res=(640 ,480))
     cubes = []
     for marker in markers:
-        if marker.info.marker_type == MARKER_TOKEN:
+        if marker.info.marker_type == MARKER_TOKEN and not(marker.info.code in safe):
             cubes.append(marker)
     if len(cubes) > 0: #checks if there are cubes
         target = FindClosest(cubes)
+        if target.info.code == lastMarker:
+            lastMarker = -1
         print "OHHH"
-        MoveToward(target)
-        if .25 > target.dist and target.dist > .2:
-            holding = False
-            while holding == False:
-                Grab()
-                time.sleep(1)
-                if len(R.see()) == 0 or True:
-                    holding = True
-            Wiggle()
-            cubeCount = cubeCount + 1
-            print "holding " + str(cubeCount) + " cubes"
-            if cubeCount >= 2:
-                print "holding max cubes achieved, dumping"
-                DumpAtBox()
-                cubeCount = 0
+        MoveToward(target, 0.25)
+        if .3 > target.dist and target.dist > .2 and 20 > target.centre.polar.rot_y and target.centre.polar.rot_y > -20:
+            lastMarker = target.info.code
+            Grab()
+            markers = R.see(res=(640, 480)) #checking to see if picked up
+            cubes = []
+            for marker in markers:
+                if marker.info.marker_type == MARKER_TOKEN:
+                    cubes.append(marker)
+            if len(cubes) > 0: #checks if there are cubes
+                target = FindClosest(cubes)
+                if target.info.code != lastMarker: #end of pick up check
+                    print "picked up the cube"
+                    cubeCount = cubeCount + 1
+                    holding.append(lastMarker)
+                    if cubeCount != 2:
+                        Wiggle()
+                else:
+                    print "failed to pick up cube"
+            else:
+                print "picked up the cube"
+                cubeCount = cubeCount + 1
+                holding.append(lastMarker)
+                if cubeCount != 2:
+                    Wiggle()
+            print "holding", str(cubeCount), " cubes"
     else:
         robotChassis.StopAll() #stops if nothing seen
         print "I SEE NOTHING"
         SentryMode()
+    if cubeCount >= 2:
+        print "holding max cubes achieved, dumping"
+        # GoToBox()
+        GoToZone()
+        for cube in holding:
+            safe.append(cube)
+        holding = []
+        print safe
+        cubeCount = 0
