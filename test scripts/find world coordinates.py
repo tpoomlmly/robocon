@@ -54,4 +54,6 @@ def getBearing(marker_list):
 
 if __name__ == "__main__":
     while(True):
-        print getBearing(R.see(res=(1920, 1440)))
+        markers = R.see(res=(1920, 1440))
+        print "bearing:", getBearing(markers)
+        print "coordinates", getPos(markers)
