@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="be22b4a3-89da-42d2-9943-d5eea34e2a60" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/test scripts/drive to cube.py" beforeDir="false" afterPath="$PROJECT_DIR$/test scripts/drive to cube.py" afterDir="false" />
-    </list>
+    <list default="true" id="be22b4a3-89da-42d2-9943-d5eea34e2a60" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
