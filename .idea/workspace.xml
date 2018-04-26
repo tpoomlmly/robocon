@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="be22b4a3-89da-42d2-9943-d5eea34e2a60" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="be22b4a3-89da-42d2-9943-d5eea34e2a60" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -134,7 +132,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="10" y="20" width="1284" height="728" extended-state="0" />
+    <frame x="10" y="20" width="1284" height="728" extended-state="1" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
